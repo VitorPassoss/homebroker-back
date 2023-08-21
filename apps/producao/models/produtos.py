@@ -18,4 +18,4 @@ class Produtos(models.Model):
     )
     codigo = models.CharField(max_length=255)
     tipo = models.ForeignKey(TipoProduto, on_delete=models.CASCADE, null=True)
-    validade = models.DateTimeField(auto_now_add=True)
+    validade_dias = models.CharField(max_length=255, default=0)

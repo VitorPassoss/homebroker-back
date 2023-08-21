@@ -19,7 +19,7 @@ class FornecedoresView(APIView):
                 search_query = Fornecedores.objects.get(pk=id)
                 search_item = FornecedoresSerializer(search_query).data
                 return Response(search_item, status=status.HTTP_200_OK)
-            except Insumos.DoesNotExist:
+            except Fornecedores.DoesNotExist:
                 return Response({"error": "Item not found"}, status=status.HTTP_404_NOT_FOUND)
 
         fornecedores_query = Fornecedores.objects.all()
