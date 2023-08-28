@@ -1,8 +1,22 @@
 from rest_framework import serializers
 from apps.producao.models.producao import Producao, ProducaoInsumo, ProducaoItem
 from apps.materia_prima.models.estoque_insumo import EstoqueInsumo
+from apps.materia_prima.serializers.insumos import InsumosSerializer
+from apps.producao.serializers.produtos import ProdutosSerializer
 from decimal import Decimal
 
+
+class ProducaoInsumoReadSerializer(serializers.ModelSerializer):
+    tipo_insumo = InsumosSerializer()
+    class Meta:
+        model = ProducaoInsumo
+        fields = '__all__'
+
+class ProducaoItemReadSerializer(serializers.ModelSerializer):
+    produto = ProdutosSerializer()
+    class Meta:
+        model = ProducaoItem
+        fields = '__all__'
 
 class ProducaoInsumoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,8 +29,8 @@ class ProducaoItemSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProducaoSerializerRead(serializers.ModelSerializer):
-    insumos = ProducaoInsumoSerializer(source='producaoinsumo_set', many=True)
-    produtos = ProducaoItemSerializer(source='producaoitem_set', many=True)
+    insumos = ProducaoInsumoReadSerializer(source='producaoinsumo_set', many=True)
+    produtos = ProducaoItemReadSerializer(source='producaoitem_set', many=True)
     
     class Meta:
         model = Producao
@@ -49,9 +63,8 @@ class ProducaoSerializer(serializers.ModelSerializer):
         if(insumo['tipo_insumo'] != 'Leite'):
             search_item  = EstoqueInsumo.objects.get(tipo_insumo_id=insumo['tipo_insumo'])
             insumo_quantidade = Decimal(insumo['quantidade'])
-            
-            # Atualiza a quantidade do item do estoque
-            search_item.quantidade -= insumo_quantidade
+            print(insumo_quantidade)
+            search_item.quantidade = search_item.quantidade -  insumo_quantidade
             return search_item.save()
         
 
