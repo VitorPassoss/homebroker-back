@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import os
+from datetime import timedelta
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,18 +28,18 @@ SECRET_KEY = 'django-insecure-8s&pf)n1w(hcfj&u=qe6k4x2npmn3p6*_ou$8^-mrm)ar%1vj!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200", 
-]
 CORS_ALLOW_ALL_ORIGINS = True
 
 
 
+
 INSTALLED_APPS = [
+    'apps.authentication',
     'apps.materia_prima',
     'apps.producao',
     'apps.saidas',
     'corsheaders',
+    'jazzmin',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -129,7 +131,43 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    )
+}
+
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        days=7
+    ),  # Defina a duração do token de acesso (exemplo: 7 dias)
+    "REFRESH_TOKEN_LIFETIME": timedelta(
+        days=7
+    ),  # Defina a duração do token de atualização (exemplo: 7 dias)
+    "ROTATE_REFRESH_TOKENS": False,  # Desabilita a rotação automática de tokens
+    "BLACKLIST_AFTER_ROTATION": False,  # Permite que os tokens de atualização antigos sejam usados mesmo após a rotação
+}
+
+
+JAZZMIN_SETTINGS = {
+    "theme": "darkly",
+    "site_title": "Bom gosto Admin",
+    "site_header": "Bom gosto Admin",
+    "site_brand": "Bom gosto Admin",
+    "welcome_sign": "Bem vindo ao ADMIN Bom gosto",
+    "copyright": "Chat admin",
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+    },
+}

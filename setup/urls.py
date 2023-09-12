@@ -20,5 +20,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/entrada/', include("apps.materia_prima.urls")),
     path('api/v1/producao/', include("apps.producao.urls")),
-    path('api/v1/saidas/', include("apps.saidas.urls"))
+    path('api/v1/saidas/', include("apps.saidas.urls")),
+    path('api/v1/auth/', include('apps.authentication.urls'))
 ]

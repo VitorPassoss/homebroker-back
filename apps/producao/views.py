@@ -3,9 +3,11 @@ from rest_framework.views import APIView
 from apps.producao.models.produtos import Produtos
 from apps.producao.models.producao import Producao
 from apps.producao.serializers.produtos import ProdutosSerializer
-from apps.producao.serializers.producao import ProducaoSerializer, ProducaoSerializerRead
+from apps.producao.serializers.producao import ProducaoSerializer, ProducaoSerializerRead, ProducaoEstoqueSerializer
 from rest_framework import status
+from apps.producao.models.producao import ProducaoItem, ProdutoEstoque
 from django.shortcuts import get_object_or_404
+from decimal import Decimal
 
 
 class ProducaoView(APIView):
@@ -29,15 +31,33 @@ class ProducaoView(APIView):
             return Response(serializer_producao.data, status=status.HTTP_201_CREATED)
         return Response(serializer_producao.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
     def put(self, request, id=None):
-        return Response({'':''})
-    
-    def delete(self, request, id=None):
-        return Response({'':''})
+        producao = Producao.objects.get(id=id)
+        producao.status = 'F'
+        producao_items = request.data.get('producao_items', [])
 
+        quantidade_total = Decimal(0)
+        
+        for item in producao_items:
+            item_query = ProducaoItem.objects.get(id=item['id'])
+            item_query.quantidade = item['quantidade']
+            item_query.save()
 
+            quantidade_total += Decimal(item['quantidade'])
+            product_type = Produtos.objects.get(pk=item['produto']['id'])
 
+            stock_item, created = ProdutoEstoque.objects.get_or_create(produto=product_type)
+
+            if not created:
+                stock_item.quantidade += Decimal(item['quantidade'])
+            else:
+                stock_item.quantidade = Decimal(item['quantidade'])
+            
+            stock_item.save()
+
+        producao.quantidade = quantidade_total
+        producao.save()
+        return Response(status=status.HTTP_201_CREATED)
 
 class ProdutosView(APIView):
     serializer_class = ProdutosSerializer
@@ -55,10 +75,16 @@ class ProdutosView(APIView):
         return Response(items, status=status.HTTP_200_OK)
 
     def post(self, request, id=None):
-        return Response({'':''})
+        serializer_produto = self.serializer_class(data=request.data)
+        if serializer_produto.is_valid():
+            serializer_produto.save()
+            return Response(serializer_produto.data, status=status.HTTP_201_CREATED)
+        return Response(serializer_produto.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+class ProdutoEstoqueView(APIView):
+    serializer_class = ProducaoEstoqueSerializer
+    def get(self, request):
+        items = ProdutoEstoque.objects.all()
+        result = self.serializer_class(items, many=True).data
+        return Response(result, status=status.HTTP_200_OK)
 
-    def put(self, request, id=None):
-        return Response({'':''})
-    
-    def delete(self, request, id=None):
-        return Response({'':''})

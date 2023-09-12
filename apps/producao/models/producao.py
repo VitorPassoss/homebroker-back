@@ -3,7 +3,7 @@ from apps.producao.models.produtos import Produtos
 from apps.materia_prima.models.insumos import Insumos
 from django.utils import timezone
 
-STATUS = [("EA", "Em andamento"), ("F", "Finalizado")]
+STATUS = [("EA", "Em andamento"), ("F", "Finalizado"), ("S", "Saida")]
 
 class Producao(models.Model):
     status = models.CharField(
@@ -39,4 +39,13 @@ class ProducaoItem(models.Model):
     quantidade =  models.DecimalField(
         max_digits=21, decimal_places=3, blank=True, null=True
     )
+
+class ProdutoEstoque(models.Model):
+    produto = models.ForeignKey(Produtos, on_delete=models.CASCADE)
+    quantidade = models.DecimalField(
+        max_digits=21, decimal_places=3, blank=True, null=True
+    )
+    valor = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+
     

@@ -10,6 +10,8 @@ from apps.materia_prima.serializers.entrada import EntradaSerializer, EntradaCre
 from apps.materia_prima.serializers.estoque_insumo import EstoqueSerializer
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from decimal import Decimal
+
 
 class FornecedoresView(APIView):
     serializer_class = FornecedoresSerializer
@@ -124,10 +126,10 @@ class EntradasView(APIView):
         stock_item, created = EstoqueInsumo.objects.get_or_create(tipo_insumo_id=tipo_insumo)
 
         if not created:
-            stock_item.quantidade += quantidade
+            stock_item.quantidade += Decimal(quantidade)
             stock_item.valor += valor
         else:
-            stock_item.quantidade = quantidade
+            stock_item.quantidade = Decimal(quantidade)
             stock_item.valor = valor
 
         stock_item.save()
@@ -145,7 +147,6 @@ class EstoqueView(APIView):
         estoque = EstoqueInsumo.objects.all()
         data = self.serializer_class(estoque, many=True).data
         return Response(data, status=status.HTTP_200_OK)
-
 
     def put(self, request, id=None):
         stock = get_object_or_404(EstoqueInsumo, pk=id)
