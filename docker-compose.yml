@@ -20,7 +20,7 @@ services:
     container_name: appdb
     restart: always
     ports:
-      - 5433:5433
+      - 5432:5432
     env_file:
       - .env
     volumes:
@@ -28,7 +28,7 @@ services:
 
   adminer:
     image: adminer
-    container_name: adminer_projex
+    container_name: adminer_bomgosto
     restart: always
     ports:
       - 8080:8080
