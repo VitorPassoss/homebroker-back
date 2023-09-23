@@ -127,10 +127,10 @@ class EntradasView(APIView):
 
         if not created:
             stock_item.quantidade += Decimal(quantidade)
-            stock_item.valor += valor
+            stock_item.valor += Decimal(valor)
         else:
             stock_item.quantidade = Decimal(quantidade)
-            stock_item.valor = valor
+            stock_item.valor = Decimal(valor)
 
         stock_item.save()
 
