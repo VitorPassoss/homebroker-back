@@ -80,7 +80,20 @@ class ProdutosView(APIView):
             serializer_produto.save()
             return Response(serializer_produto.data, status=status.HTTP_201_CREATED)
         return Response(serializer_produto.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+    
+    def put(self, request, id=None):
+        item = get_object_or_404(Produtos.objects.all(), pk=id)
+        serializer_produto = self.serializer_class(instance=item, data=request.data, partial=True)
+        if serializer_produto.is_valid():
+            serializer_produto.save()
+            return Response(serializer_produto.data, status=status.HTTP_200_OK)
+        return Response(serializer_produto.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, id=None):
+        item = get_object_or_404(Produtos.objects.filter(pk=id))
+        item.delete()
+        return Response({"message": f"Product with id {id} has been deleted."}, status=status.HTTP_204_NO_CONTENT)
+
 class ProdutoEstoqueView(APIView):
     serializer_class = ProducaoEstoqueSerializer
     def get(self, request):
