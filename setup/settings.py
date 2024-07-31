@@ -31,13 +31,9 @@ ALLOWED_HOSTS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True
 
 
-
-
 INSTALLED_APPS = [
+    'apps.staffs',
     'apps.authentication',
-    'apps.materia_prima',
-    'apps.producao',
-    'apps.saidas',
     'corsheaders',
     'jazzmin',
     'rest_framework',
