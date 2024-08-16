@@ -1,9 +1,10 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.exceptions import ValidationError 
 from django.shortcuts import get_object_or_404
-from apps.staffs.serializers import ProfissionaisSerializer, ProfissionalCreateSerializer, TurnoSerializer, StatusSerializer, EmpresaSerializer, CargoSerializer
-from apps.staffs.models import Profissional, Turnos, Status, Empresas, Cargos
+from apps.staffs.serializers import ProfissionaisSerializer, ProfissionalCreateSerializer, TurnoSerializer, StatusSerializer, EmpresaSerializer, CargoSerializer, FechamentosSerializer, ProfissionalCreateSerializer, FechamentosCreateSerializer, CarteiraSerializer, CarteiraCreateSerializer, PersonSerializer, PersonCreateSerializer
+from apps.staffs.models import Profissional, Turnos, Status, Empresas, Cargos, Fechamentos, Carteira, Person
 
 from django.db.models import Q  
 
@@ -90,3 +91,52 @@ class CargoView(APIView):
         query = Cargos.objects.all()
         resp = self.serializer_class(query, many=True ).data
         return Response(resp, status=status.HTTP_200_OK)
+    
+
+class FechamentosView(APIView):
+    serializer_class = FechamentosSerializer
+    def get(self, request, id=None):
+        query = Fechamentos.objects.filter(empresa_id = id)
+        resp = self.serializer_class(query, many=True ).data
+        return Response(resp, status=status.HTTP_200_OK)
+    
+    def post(self, request, id=None):
+        serializer_item = FechamentosCreateSerializer(data=request.data)
+        if serializer_item.is_valid():
+            serializer_item.save()
+            return Response(serializer_item.data, status=status.HTTP_201_CREATED)
+        return Response(serializer_item.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class WalletByPersonId(APIView):
+    serializer_class = CarteiraSerializer
+
+    def get(self, request, id=None):
+        query = Carteira.objects.filter(person_id=id)
+        resp = self.serializer_class(query, many=True).data
+        return Response(resp, status=status.HTTP_200_OK)
+    
+    def post(self, request, id=None):
+        serializer = CarteiraCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                wallet = serializer.save()
+                return Response(CarteiraCreateSerializer(wallet).data, status=status.HTTP_201_CREATED)
+            except ValidationError as e:  # Use the imported ValidationError
+                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class PersonView(APIView):
+    serializer_class = PersonSerializer
+    def get(self, request, id=None):
+        query = Person.objects.filter(user_id = id)
+        resp = self.serializer_class(query, many=True ).data
+        return Response(resp, status=status.HTTP_200_OK)
+    
+    def post(self, request, id=None):
+        serializer_item = PersonCreateSerializer(data=request.data)
+        if serializer_item.is_valid():
+            serializer_item.save()
+            return Response(serializer_item.data, status=status.HTTP_201_CREATED)
+        return Response(serializer_item.errors, status=status.HTTP_400_BAD_REQUEST)

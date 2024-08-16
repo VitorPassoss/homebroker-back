@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 from django.db import models
+from django.contrib.auth.models import User
 
 class Empresas(models.Model):
     nome = models.CharField(max_length=255)
@@ -12,6 +13,20 @@ class Empresas(models.Model):
         null=True
     )
     contato = models.CharField(max_length=255,  blank=True, null=True)
+
+    def __str__(self):
+        return self.nome
+
+class Fechamentos(models.Model):
+    empresa = models.ForeignKey(Empresas, on_delete=models.CASCADE, null=True)
+    dia = models.CharField(max_length=255, blank=True, null=True)
+    valor_final = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    valor_inicial = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    variação = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    porcentagem = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+
+    def __str__(self):
+        return f"{self.empresa} - {self.dia}"
 
 class Status(models.Model):
     nome = models.CharField(max_length=255)
@@ -50,6 +65,25 @@ class Profissional(models.Model):
 
 
 
-   
+class Person(models.Model):
+    nome = models.CharField(max_length=255)
+    cpf = models.CharField(
+        verbose_name="CPF",
+        max_length=14,
+        blank=True,
+        null=True
+    )
+    contato_email = models.CharField(max_length=255, blank=True, null=True)
+    saldo_atual = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+class Carteira(models.Model):
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, null=True)
+    empresa = models.ForeignKey(Empresas, on_delete=models.CASCADE, null=True)
+    valor_compra = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    valor_venda = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    valor_acao = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    quantidade = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+
 
 
