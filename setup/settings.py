@@ -18,6 +18,13 @@ from datetime import timedelta
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://estadodigital.fun',
+    'http://localhost:8000',  # For local development
+    # Add other trusted origins as needed
+]
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
