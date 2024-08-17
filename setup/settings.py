@@ -163,10 +163,10 @@ SIMPLE_JWT = {
 
 JAZZMIN_SETTINGS = {
     "theme": "darkly",
-    "site_title": "Bom gosto Admin",
-    "site_header": "Bom gosto Admin",
-    "site_brand": "Bom gosto Admin",
-    "welcome_sign": "Bem vindo ao ADMIN Bom gosto",
+    "site_title": "HomeBroker Admin",
+    "site_header": "HomeBroker Admin",
+    "site_brand": "HomeBroker Admin",
+    "welcome_sign": "Bem vindo ao ADMIN HomeBroker",
     "copyright": "Chat admin",
     "icons": {
         "auth": "fas fa-users-cog",
