@@ -52,7 +52,12 @@ SECRET_KEY = 'django-insecure-8s&pf)n1w(hcfj&u=qe6k4x2npmn3p6*_ou$8^-mrm)ar%1vj!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+CORS_ALLOWED_ORIGINS = [
+    'https://estadodigital.fun',
+    'http://localhost:8000',
+    'http://localhost:4200',
+    'https://homebroker-front.vercel.app'
+]
 CORS_ALLOW_ALL_ORIGINS = True
 
 
