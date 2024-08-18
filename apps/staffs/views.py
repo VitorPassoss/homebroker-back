@@ -164,11 +164,11 @@ class PagamentoView(APIView):
                     person_payment = Person.objects.get(cpf=document)
                     person_payment.saldo_atual += price
                     person_payment.save()
-                    Pagamentos.objects.create(
-                        person=person_payment,
-                        id_pagamento=body.get('transaction_id', ''),
-                        valor=price
-                    )
+                    # Pagamentos.objects.create(
+                    #     person=person_payment,
+                    #     id_pagamento=body.get('transaction_id', ''),
+                    #     valor=price
+                    # )
                 except Person.DoesNotExist:
                     return Response({"error": "Pessoa não encontrada."}, status=status.HTTP_404_NOT_FOUND)
 
