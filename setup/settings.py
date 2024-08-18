@@ -20,8 +20,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 CSRF_TRUSTED_ORIGINS = [
     'https://estadodigital.fun',
-    'http://localhost:8000',  # For local development
-    # Add other trusted origins as needed
+    'http://localhost:8000',
+    'http://localhost:4200'
 ]
 
 
