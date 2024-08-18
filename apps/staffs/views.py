@@ -149,38 +149,24 @@ class PersonView(APIView):
 
 class PagamentoView(APIView):
     def post(self, request, id=None):
+       
+        body = json.loads(request.body)
+        print("Recebido o corpo da requisição:", body)
+
+        # Extrair dados do corpo
+        document = body['customer']['document']
+        price = Decimal(body['total_price'])  # Convertendo para Decimal
+        status_code = body['status']  # Renomeado para evitar conflito com o código HTTP
+
         try:
-            # Carregar e imprimir o corpo da requisição
-            body = json.loads(request.body)
-            print("Recebido o corpo da requisição:", body)
+            person_payment = Person.objects.get(cpf=document)
+            person_payment.saldo_atual += price
+            person_payment.save()
+            
+        except Person.DoesNotExist:
+            return Response({"error": "Pessoa não encontrada."}, status=status.HTTP_404_NOT_FOUND)
 
-            # Extrair dados do corpo
-            document = body['customer']['document']
-            price = Decimal(body['total_price'])  # Convertendo para Decimal
-            status_code = body['status']  # Renomeado para evitar conflito com o código HTTP
-
-            if status_code == 'approved':
-                try:
-                    # Verificar e atualizar o saldo da pessoa
-                    person_payment = Person.objects.get(cpf=document)
-                    person_payment.saldo_atual += price
-                    person_payment.save()
-                    
-                    # Aqui você pode descomentar e usar o seguinte código se quiser registrar os pagamentos
-                    # Pagamentos.objects.create(
-                    #     person=person_payment,
-                    #     id_pagamento=body.get('transaction_id', ''),
-                    #     valor=price
-                    # )
-                    
-                except Person.DoesNotExist:
-                    return Response({"error": "Pessoa não encontrada."}, status=status.HTTP_404_NOT_FOUND)
-
-            return Response(body, status=status.HTTP_201_CREATED)
+        return Response(body, status=status.HTTP_201_CREATED)
         
-        except json.JSONDecodeError:
-            return Response({"error": "JSON inválido."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        except Exception as e:
-            # Assegurando que o status code seja um inteiro
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+       
+     
