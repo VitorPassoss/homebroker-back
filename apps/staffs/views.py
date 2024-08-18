@@ -7,6 +7,7 @@ from apps.staffs.serializers import ProfissionaisSerializer, ProfissionalCreateS
 from apps.staffs.models import Profissional, Turnos, Status, Empresas, Cargos, Fechamentos, Carteira, Person
 
 from django.db.models import Q  
+import json
 
 class ProfissionaisView(APIView):
     serializer_class = ProfissionaisSerializer
@@ -140,3 +141,13 @@ class PersonView(APIView):
             serializer_item.save()
             return Response(serializer_item.data, status=status.HTTP_201_CREATED)
         return Response(serializer_item.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class PagamentoView(APIView):
+
+    def post(self, request, id=None):
+        body = json.loads(request.body)
+        print("Recebido o corpo da requisição:", body)
+
+        return Response("pagamento recebido", status=status.HTTP_201_CREATED)

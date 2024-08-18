@@ -13,6 +13,8 @@ urlpatterns = [
  re_path(r'^fechamentos/(?P<id>\d+)?$', views.FechamentosView.as_view(), name='fechamentos-item'),
  path('wallet', views.WalletByPersonId.as_view(), name='wallet'),
  re_path(r'^wallet/(?P<id>\d+)?$', views.WalletByPersonId.as_view(), name='wallet-item'),
-  path('person', views.PersonView.as_view(), name='person'),
+ path('person', views.PersonView.as_view(), name='person'),
  re_path(r'^person/(?P<id>\d+)?$', views.PersonView.as_view(), name='person-item'),
+ path('payment', views.PagamentoView.as_view(), name='payment')
+
  ]
