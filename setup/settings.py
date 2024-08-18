@@ -21,7 +21,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 CSRF_TRUSTED_ORIGINS = [
     'https://estadodigital.fun',
     'http://localhost:8000',
-    'http://localhost:4200'
+    'http://localhost:4200',
+    'https://homebroker-front.vercel.app'
 ]
 
 
