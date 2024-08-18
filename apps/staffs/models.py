@@ -86,4 +86,8 @@ class Carteira(models.Model):
     quantidade = models.DecimalField(max_digits=19, decimal_places=2, null=True)
 
 
+class Pagamentos(models.Model):
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, null=True)
+    id_pagamento = models.ForeignKey(Empresas, on_delete=models.CASCADE, null=True)
+    valor = models.DecimalField(max_digits=19, decimal_places=2, null=True)
 

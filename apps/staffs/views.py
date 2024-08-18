@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError 
 from django.shortcuts import get_object_or_404
 from apps.staffs.serializers import ProfissionaisSerializer, ProfissionalCreateSerializer, TurnoSerializer, StatusSerializer, EmpresaSerializer, CargoSerializer, FechamentosSerializer, ProfissionalCreateSerializer, FechamentosCreateSerializer, CarteiraSerializer, CarteiraCreateSerializer, PersonSerializer, PersonCreateSerializer
-from apps.staffs.models import Profissional, Turnos, Status, Empresas, Cargos, Fechamentos, Carteira, Person
+from apps.staffs.models import Profissional, Turnos, Status, Empresas, Cargos, Fechamentos, Carteira, Person, Pagamentos
 
 from django.db.models import Q  
 import json
@@ -166,6 +166,11 @@ class PagamentoView(APIView):
                     person_payment = Person.objects.get(cpf=document)
                     person_payment.saldo_atual += price
                     person_payment.save()
+                    Pagamentos.objects.create(
+                        person=person_payment,
+                        id_pagamento=body.get('transaction_id', ''),
+                        valor=price
+                    )
                 except Person.DoesNotExist:
                     return Response({"error": "Pessoa não encontrada."}, status=status.HTTP_404_NOT_FOUND)
 
