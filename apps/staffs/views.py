@@ -150,4 +150,4 @@ class PagamentoView(APIView):
         body = json.loads(request.body)
         print("Recebido o corpo da requisição:", body)
 
-        return Response("pagamento recebido", status=status.HTTP_201_CREATED)
+        return Response(body, status=status.HTTP_201_CREATED)
