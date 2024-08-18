@@ -159,8 +159,6 @@ class PagamentoView(APIView):
             price = Decimal(body.get('total_price', '0.00'))  # Convertendo para Decimal
             status_code = body.get('status', '')  # Renomeado para evitar conflito com o código HTTP
 
-            document = re.sub(r'\D', '', document)
-
             if status_code == 'approved':
                 try:
                     person_payment = Person.objects.get(cpf=document)
