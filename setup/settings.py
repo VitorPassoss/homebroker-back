@@ -39,6 +39,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 
 INSTALLED_APPS = [
+    "daphne",
+    "channels",
     'apps.staffs',
     'apps.authentication',
     'corsheaders',
@@ -81,7 +83,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'setup.wsgi.application'
+
+WSGI_APPLICATION = "setup.wsgi.application"
+ASGI_APPLICATION = "setup.asgi.application"
 
 
 # Database
@@ -159,6 +163,17 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,  # Desabilita a rotação automática de tokens
     "BLACKLIST_AFTER_ROTATION": False,  # Permite que os tokens de atualização antigos sejam usados mesmo após a rotação
 }
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("cache", 6379)],
+        },
+    },
+}
+
+
 
 
 JAZZMIN_SETTINGS = {
