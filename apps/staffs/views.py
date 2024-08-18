@@ -8,6 +8,7 @@ from apps.staffs.models import Profissional, Turnos, Status, Empresas, Cargos, F
 
 from django.db.models import Q  
 import json
+import re
 
 class ProfissionaisView(APIView):
     serializer_class = ProfissionaisSerializer
@@ -138,16 +139,38 @@ class PersonView(APIView):
     def post(self, request, id=None):
         serializer_item = PersonCreateSerializer(data=request.data)
         if serializer_item.is_valid():
-            serializer_item.save()
+            # Salvar a pessoa, removendo caracteres não numéricos do CPF
+            person = serializer_item.save()
+            person.cpf = re.sub(r'\D', '', person.cpf)
+            person.save()
             return Response(serializer_item.data, status=status.HTTP_201_CREATED)
         return Response(serializer_item.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class PagamentoView(APIView):
-
     def post(self, request, id=None):
-        body = json.loads(request.body)
-        print("Recebido o corpo da requisição:", body)
+        try:
+            # Carregar e imprimir o corpo da requisição
+            body = json.loads(request.body)
+            print("Recebido o corpo da requisição:", body)
 
-        return Response(body, status=status.HTTP_201_CREATED)
+            # Extrair dados do corpo
+            document = body.get('customer', {}).get('document', '')
+            price = float(body.get('total_price', '0.00'))
+            status = body.get('status', '')
+
+            document = re.sub(r'\D', '', document)
+
+            if status == 'approved':
+                try:
+                    person_payment = Person.objects.get(cpf=document)
+                    person_payment.saldo_atual += price
+                    person_payment.save()
+                except Person.DoesNotExist:
+                    return Response({"error": "Pessoa não encontrada."}, status=status.HTTP_404_NOT_FOUND)
+
+            return Response(body, status=status.HTTP_201_CREATED)
+        except json.JSONDecodeError:
+            return Response({"error": "JSON inválido."}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status)
