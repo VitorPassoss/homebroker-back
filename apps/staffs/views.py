@@ -9,6 +9,7 @@ from apps.staffs.models import Profissional, Turnos, Status, Empresas, Cargos, F
 from django.db.models import Q  
 import json
 import re
+from decimal import Decimal
 
 class ProfissionaisView(APIView):
     serializer_class = ProfissionaisSerializer
