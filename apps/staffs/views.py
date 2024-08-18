@@ -156,12 +156,12 @@ class PagamentoView(APIView):
 
             # Extrair dados do corpo
             document = body.get('customer', {}).get('document', '')
-            price = float(body.get('total_price', '0.00'))
-            status = body.get('status', '')
+            price = Decimal(body.get('total_price', '0.00'))  # Convertendo para Decimal
+            status_code = body.get('status', '')  # Renomeado para evitar conflito com o código HTTP
 
             document = re.sub(r'\D', '', document)
 
-            if status == 'approved':
+            if status_code == 'approved':
                 try:
                     person_payment = Person.objects.get(cpf=document)
                     person_payment.saldo_atual += price
@@ -178,4 +178,5 @@ class PagamentoView(APIView):
         except json.JSONDecodeError:
             return Response({"error": "JSON inválido."}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({"error": str(e)}, status=status)
+            # Assegurando que o status code seja um inteiro
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
