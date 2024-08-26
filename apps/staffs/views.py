@@ -10,6 +10,7 @@ from django.db.models import Q
 import json
 import re
 from decimal import Decimal
+from django.db.models import Sum
 
 class ProfissionaisView(APIView):
     serializer_class = ProfissionaisSerializer
@@ -128,8 +129,47 @@ class WalletByPersonId(APIView):
             except ValidationError as e:  # Use the imported ValidationError
                 return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    
+    def put(self, request, id=None):
+        person_id = request.data.get('person')
+        empresa = request.data.get('empresa')
+        valor_acao = request.data.get('valor_acao')
+        quantidade_vendida = request.data.get('quantidade_vendida')
+        person = Person.objects.get(id=person_id)  
+
+        if not all([empresa, valor_acao, quantidade_vendida]):
+            return Response({"error": "Dados insuficientes"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Converte 'valor_acao' para Decimal
+            valor_acao = Decimal(valor_acao)
+
+            # Calcula o total atual
+            valor_compra_sum = Carteira.objects.filter(empresa=empresa, person_id=person_id).aggregate(Sum('valor_compra'))['valor_compra__sum'] or Decimal('0')
+            quantidade_sum = Carteira.objects.filter(empresa=empresa, person_id=person_id).aggregate(Sum('quantidade'))['quantidade__sum'] or 0
+
+            # Atualiza ou cria a carteira
+            wallet, created = Carteira.objects.update_or_create(
+                empresa=empresa,
+                person_id=person_id,
+                defaults={
+                    'valor_compra': valor_compra_sum - valor_acao * quantidade_vendida,
+                    'quantidade': quantidade_sum - quantidade_vendida,
+                    'valor_acao': valor_acao
+                }
+            )
+
+            person.saldo_atual += valor_acao * quantidade_vendida
+            person.save()
+
+            if wallet.quantidade <= 0:
+                wallet.delete()
+                return Response({"message": "Carteira removida pois a quantidade chegou a zero."}, status=status.HTTP_204_NO_CONTENT)
+
+            return Response(self.serializer_class(wallet).data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 class PersonView(APIView):
     serializer_class = PersonSerializer
     def get(self, request, id=None):

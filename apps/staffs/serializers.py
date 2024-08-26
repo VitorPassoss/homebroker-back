@@ -115,6 +115,11 @@ class CarteiraCreateSerializer(serializers.ModelSerializer):
         valor_acao = validated_data['valor_acao']
         person = Person.objects.get(id=person_instance.id)  
 
+
+        if person.saldo_atual < valor_compra:
+            raise serializers.ValidationError('Saldo insuficiente.')
+        
+
         valor_compra_sum = Carteira.objects.filter(empresa=empresa, person=person).aggregate(models.Sum('valor_compra'))['valor_compra__sum'] or 0
         quantidade_sum = Carteira.objects.filter(empresa=empresa, person=person).aggregate(models.Sum('quantidade'))['quantidade__sum'] or 0
 
@@ -127,9 +132,6 @@ class CarteiraCreateSerializer(serializers.ModelSerializer):
                 'valor_acao': valor_acao
             }
         )
-
-        if person.saldo_atual < valor_compra:
-            raise serializers.ValidationError('Saldo insuficiente.')
 
         person.saldo_atual -= valor_compra
         person.save()
