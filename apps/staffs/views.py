@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError 
 from django.shortcuts import get_object_or_404
 from apps.staffs.serializers import ProfissionaisSerializer, ProfissionalCreateSerializer, TurnoSerializer, StatusSerializer, EmpresaSerializer, CargoSerializer, FechamentosSerializer, ProfissionalCreateSerializer, FechamentosCreateSerializer, CarteiraSerializer, CarteiraCreateSerializer, PersonSerializer, PersonCreateSerializer
-from apps.staffs.models import Profissional, Turnos, Status, Empresas, Cargos, Fechamentos, Carteira, Person, Pagamentos
+from apps.staffs.models import Profissional, Turnos, Status, Empresas, Cargos, Fechamentos, Carteira, Person
 
 from django.db.models import Q  
 import json
