@@ -3,7 +3,7 @@ from .models import Fechamentos, Empresas, Carteira, Person
 
 class EmpresasAdmin(admin.ModelAdmin):
     search_fields = ['nome']
-    list_display = ['nome', 'cnpj', 'contato']
+    list_display = ['nome','status']
 
 class FechamentoAdmin(admin.ModelAdmin):
     search_fields = ['dia', 'empresa__nome']  # Ensure 'empresa__nome' is a valid field

@@ -85,8 +85,8 @@ class StatusView(APIView):
 class EmpresaView(APIView):
     serializer_class = EmpresaSerializer
     def get(self, request, id=None):
-        query = Empresas.objects.all()
-        resp = self.serializer_class(query, many=True ).data
+        query = Empresas.objects.filter(status=True)  # Filtra apenas empresas com status True
+        resp = self.serializer_class(query, many=True).data
         return Response(resp, status=status.HTTP_200_OK)
 
 class CargoView(APIView):

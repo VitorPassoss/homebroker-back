@@ -80,6 +80,7 @@ class FechamentosCreateSerializer(serializers.ModelSerializer):
             'valor_final',
             'valor_inicial',
             'valorizacao',
+            'porcentagem'
             ]
 
 

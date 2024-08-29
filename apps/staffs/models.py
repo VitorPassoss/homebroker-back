@@ -13,6 +13,7 @@ class Empresas(models.Model):
         null=True
     )
     contato = models.CharField(max_length=255,  blank=True, null=True)
+    status = models.BooleanField(default=True)  
 
     def __str__(self):
         return self.nome
@@ -23,7 +24,7 @@ class Fechamentos(models.Model):
     valor_final = models.DecimalField(max_digits=19, decimal_places=2, null=True)
     valor_inicial = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
     variação = models.DecimalField(max_digits=19, decimal_places=2, null=True)
-    porcentagem = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    porcentagem = models.CharField(max_length=255)
 
     def __str__(self):
         return f"{self.empresa} - {self.dia}"
