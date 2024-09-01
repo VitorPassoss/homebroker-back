@@ -79,7 +79,7 @@ class FechamentosCreateSerializer(serializers.ModelSerializer):
             'dia',
             'valor_final',
             'valor_inicial',
-            'valorizacao',
+            'variação',
             'porcentagem'
             ]
 
